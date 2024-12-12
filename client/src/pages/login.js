@@ -1,17 +1,30 @@
 // src/components/LoginPage.js
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/auth-context';
 
 const LoginPage = () => {
+  const { login } = useAuth();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  
   const handleSubmit = e => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login submitted', { email, password });
+    // Simulate authentication logic
+    // In a real application, you'd verify credentials with a backend service
+    if (email && password) {
+      // Mock user data
+      const userData = {
+        username: email.split('@')[0],
+        email
+      };
+      login(userData);
+    } else {
+      alert('Please enter both email and password.');
+    }
   };
-
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded shadow">

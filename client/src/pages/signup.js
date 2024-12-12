@@ -1,18 +1,30 @@
 // src/components/SignupPage.js
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/auth-context';
 
 const SignupPage = () => {
+  const { login } = useAuth();
+  
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  
   const handleSubmit = e => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Signup submitted', { username, email, password });
+    // Simulate signup logic
+    if (username && email && password) {
+      // In a real app, you'd send this data to the backend to create a new user
+      const userData = {
+        username,
+        email
+      };
+      login(userData); // Automatically log in the user after signup
+    } else {
+      alert('Please fill in all fields.');
+    }
   };
-
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded shadow">
