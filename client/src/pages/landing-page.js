@@ -16,7 +16,7 @@ const LandingPage = () => {
 
       {/* Content */}
       <div className="relative bg-opacity-70 p-8 rounded-lg text-left max-w-2xl ml-10 sm:ml-16 md:ml-24 lg:ml-32">
-        <h1 className="text-8xl font-bold mb-4 text-white">
+        <h1 className="text-8xl font-semibold mb-4 text-white">
           Travel Gear Organizer
         </h1>
         <p className="text-xl mb-6 text-gray-200">
@@ -27,7 +27,7 @@ const LandingPage = () => {
             to="/login"
             className="px-8 py-2 bg-yellow-200 text-black rounded hover:bg-yellow-300 transition"
           >
-            Login
+            Log In
           </Link>
           <Link
             to="/signup"
