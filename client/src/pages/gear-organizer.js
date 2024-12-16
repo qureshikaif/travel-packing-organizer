@@ -180,7 +180,7 @@ const GearOrganizer = () => {
                 ) : (
                   gearPack.map((pack) => (
                     <motion.div
-                      key={pack.id}
+                      key={pack._id}
                       className="bg-yellow-50 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}

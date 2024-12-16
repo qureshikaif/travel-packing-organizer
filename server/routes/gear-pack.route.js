@@ -25,7 +25,7 @@ router.post("/", authMiddleware, createGearPack);
  * @access  Public
  * @queryParam {string} [userId] - Optional. ID of the user to filter gear packs.
  */
-router.get("/", getAllGearPacks);
+router.get("/:id", getAllGearPacks);
 
 /**
  * @route   GET /api/gearpacks/:id

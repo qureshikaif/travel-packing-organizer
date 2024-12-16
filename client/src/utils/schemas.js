@@ -39,3 +39,13 @@ export const gearPackSchema = z.object({
     )
     .min(1, "At least one gear item is required"),
 });
+
+export const reminderSchema = z.object({
+  item: z
+    .string()
+    .min(1, "Item to Remind is required.")
+    .max(100, "Item to Remind must be at most 100 characters."),
+  timeBefore: z.enum(["1 day", "2 days", "1 week"], {
+    errorMap: () => ({ message: "Please select a valid time before trip." }),
+  }),
+});
