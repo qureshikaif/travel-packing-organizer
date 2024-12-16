@@ -1,3 +1,3 @@
 import useGearList from "./useGearList";
-
-export { useGearList };
+import useGearPack from "./useGearPack";
+export { useGearList, useGearPack };

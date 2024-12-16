@@ -1,6 +1,6 @@
 // src/components/GearOrganizer.js
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/auth-context";
 import {
   CheckCircle,
@@ -9,12 +9,11 @@ import {
   PlusCircle,
   X,
   User,
-  Bell,
 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { Loader, Toast } from "../components";
-import { useGearList } from "../queries";
+import { Loader, Sidebar, Toast } from "../components";
+import { useGearList, useGearPack } from "../queries";
 
 import GearPackForm from "./gear-pack";
 import Reminders from "./reminder";
@@ -44,18 +43,17 @@ const predefinedGearPacks = [
 
 const GearOrganizer = () => {
   const { user, logout } = useAuth();
-  const { data, isFetching, isError } = useGearList();
+  const { data: gearList, isFetching: isFetchingGearList } = useGearList();
+  const { data: gearPack, isFetching: isFetchingGearPack } = useGearPack();
 
-  console.log("API RESPONSE: " + data);
+  const isFetching = isFetchingGearList || isFetchingGearPack;
+
+  console.log("API RESPONSE", gearPack);
 
   // State to hold user's gear list
-  const [gearList, setGearList] = useState([]);
 
   // State for toast notifications
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
-
-  // State for custom gear packs
-  const [customGearPacks, setCustomGearPacks] = useState([]);
 
   // State for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,89 +61,8 @@ const GearOrganizer = () => {
   // State for selected feature in sidebar
   const [selectedFeature, setSelectedFeature] = useState("predefined");
 
-  // Load gearList from localStorage on component mount
-  useEffect(() => {
-    const storedGearList = localStorage.getItem("gearList");
-    if (storedGearList) {
-      setGearList(JSON.parse(storedGearList));
-    }
-  }, []);
-
-  // Save gearList to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("gearList", JSON.stringify(gearList));
-  }, [gearList]);
-
-  // Handle adding items from a gear pack
-  const addGearPack = (pack) => {
-    setGearList((prevList) => {
-      // Avoid adding duplicate items
-      const newItems = pack.items.filter(
-        (item) => !prevList.some((gear) => gear.name === item)
-      );
-      if (newItems.length === 0) {
-        setToast({
-          show: true,
-          message: "All items from this pack are already in your gear list.",
-          type: "error",
-        });
-        return prevList;
-      }
-      setToast({
-        show: true,
-        message: `${pack.name} added to your gear list!`,
-        type: "success",
-      });
-      // Add new items with packed status as false
-      const itemsToAdd = newItems.map((item) => ({
-        name: item,
-        packed: false,
-      }));
-      return [...prevList, ...itemsToAdd];
-    });
-  };
-
-  // Handle removing an item from gear list
-  const removeGearItem = (itemName) => {
-    setGearList((prevList) =>
-      prevList.filter((gear) => gear.name !== itemName)
-    );
-    setToast({
-      show: true,
-      message: `${itemName} removed from your gear list.`,
-      type: "success",
-    });
-  };
-
-  // Handle toggling the packed status of an item
-  const togglePackedStatus = (itemName) => {
-    setGearList((prevList) =>
-      prevList.map((gear) =>
-        gear.name === itemName ? { ...gear, packed: !gear.packed } : gear
-      )
-    );
-  };
-
-  // Handle creating a new gear pack
-  const handleCreateGearPack = (newPack) => {
-    setCustomGearPacks([...customGearPacks, newPack]);
-    setToast({
-      show: true,
-      message: `Gear pack "${newPack.name}" created!`,
-      type: "success",
-    });
-  };
-
   if (isFetching) {
     return <Loader />;
-  }
-
-  if (isError) {
-    return (
-      <div className="flex justify-center items-center h-screen text-gray-500">
-        <div className="w-10 h-10 text-yellow-500">An Error Occured</div>
-      </div>
-    );
   }
 
   return (
@@ -200,55 +117,10 @@ const GearOrganizer = () => {
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row">
         {/* Sidebar */}
-        <aside className="w-full h-[84vh] lg:w-1/4 bg-yellow-100 p-6 rounded-lg shadow mb-8 lg:mb-0 lg:mr-8">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Menu</h2>
-          <ul>
-            <li className="mb-4">
-              <button
-                onClick={() => setSelectedFeature("predefined")}
-                className={`flex items-center w-full text-left p-2 rounded-xl hover:bg-yellow-200 ${
-                  selectedFeature === "predefined" ? "bg-yellow-200" : ""
-                }`}
-              >
-                <Package className="h-6 w-6 text-yellow-500 mr-2" />
-                Predefined Packs
-              </button>
-            </li>
-            <li className="mb-4">
-              <button
-                onClick={() => setSelectedFeature("custom")}
-                className={`flex items-center w-full text-left p-2 rounded-xl hover:bg-yellow-200 ${
-                  selectedFeature === "custom" ? "bg-yellow-200" : ""
-                }`}
-              >
-                <PlusCircle className="h-6 w-6 text-green-500 mr-2" />
-                Custom Packs
-              </button>
-            </li>
-            <li className="mb-4">
-              <button
-                onClick={() => setSelectedFeature("reminders")}
-                className={`flex items-center w-full text-left p-2 rounded-xl hover:bg-yellow-200 ${
-                  selectedFeature === "reminders" ? "bg-yellow-200" : ""
-                }`}
-              >
-                <Bell className="h-6 w-6 text-yellow-500 mr-2" />
-                Reminders
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setSelectedFeature("group")}
-                className={`flex items-center w-full text-left p-2 rounded-xl hover:bg-yellow-200 ${
-                  selectedFeature === "group" ? "bg-yellow-200" : ""
-                }`}
-              >
-                <User className="h-6 w-6 text-blue-500 mr-2" />
-                Group Packing
-              </button>
-            </li>
-          </ul>
-        </aside>
+        <Sidebar
+          selectedFeature={selectedFeature}
+          setSelectedFeature={setSelectedFeature}
+        />
 
         {/* Gear Packs and Gear List */}
         <main className="w-full lg:w-3/4 pr-5">
@@ -281,7 +153,7 @@ const GearOrganizer = () => {
                       </ul>
                     </div>
                     <button
-                      onClick={() => addGearPack(pack)}
+                      // onClick={() => addGearPack(pack)}
                       className="mt-auto flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-transform transform hover:scale-105"
                     >
                       <CheckCircle className="h-5 w-5 mr-2" />
@@ -300,13 +172,13 @@ const GearOrganizer = () => {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Custom Gear Packs */}
-                {customGearPacks.length === 0 ? (
+                {gearPack.length === 0 ? (
                   <p className="text-gray-600">
                     No custom gear packs created yet. Click "Create Gear Pack"
                     to get started.
                   </p>
                 ) : (
-                  customGearPacks.map((pack) => (
+                  gearPack.map((pack) => (
                     <motion.div
                       key={pack.id}
                       className="bg-yellow-50 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
@@ -327,7 +199,7 @@ const GearOrganizer = () => {
                         </ul>
                       </div>
                       <button
-                        onClick={() => addGearPack(pack)}
+                        // onClick={() => addGearPack(pack)}
                         className="mt-auto flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-transform transform hover:scale-105"
                       >
                         <CheckCircle className="h-5 w-5 mr-2" />
@@ -382,7 +254,7 @@ const GearOrganizer = () => {
                         <input
                           type="checkbox"
                           checked={gear.packed}
-                          onChange={() => togglePackedStatus(gear.name)}
+                          // onChange={() => togglePackedStatus(gear.name)}
                           className="form-checkbox h-5 w-5 text-yellow-600"
                         />
                         <span
@@ -394,7 +266,7 @@ const GearOrganizer = () => {
                         </span>
                       </div>
                       <button
-                        onClick={() => removeGearItem(gear.name)}
+                        // onClick={() => removeGearItem(gear.name)}
                         className="flex items-center px-3 py-1 bg-red-400 text-white rounded hover:bg-red-500 transition-transform transform hover:scale-105"
                         aria-label={`Remove ${gear.name}`}
                       >
@@ -454,10 +326,7 @@ const GearOrganizer = () => {
                     </button>
                   </Dialog.Title>
                   <div className="mt-4">
-                    <GearPackForm
-                      onCreate={handleCreateGearPack}
-                      onClose={() => setIsModalOpen(false)}
-                    />
+                    <GearPackForm onClose={() => setIsModalOpen(false)} />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

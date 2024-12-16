@@ -1,20 +1,23 @@
-// src/utils/handleSignup.js
-import axios from "axios";
-
-// Ensure that you have defined REACT_APP_API_URL in your .env file
-const { REACT_APP_API_URL } = process.env;
-
-const handleCreateGear = async (data) => {
+import API_CLIENT from "../utils/api-client";
+/**
+ * Handles the creation of a new gear pack.
+ * @param {Object} data - The form data.
+ * @param {string} data.packName - The name of the gear pack.
+ * @param {string[]} data.items - An array of gear items.
+ * @returns {Promise<Object>} - The created gear pack data.
+ * @throws {Error} - Throws an error if the request fails.
+ */
+const handleCreateGearPack = async (data) => {
   try {
-    const response = await axios.post(
-      `${REACT_APP_API_URL}/api/auth/register`,
-      {
-        username: data.username,
-        email: data.email,
-        password: data.password,
-      }
-    );
-    console.log(response.data);
+    const payload = {
+      name: data.packName.trim(),
+      items: data.items
+        .map((item) => item.trim())
+        .filter((item) => item !== ""),
+    };
+
+    const response = await API_CLIENT.post("/api/gearpacks", payload);
+    console.log("Gear Pack Created:", response.data);
     return response.data;
   } catch (error) {
     // Handle errors appropriately
@@ -26,4 +29,4 @@ const handleCreateGear = async (data) => {
   }
 };
 
-export default handleCreateGear;
+export default handleCreateGearPack;

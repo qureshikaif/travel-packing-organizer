@@ -1,11 +1,13 @@
 // src/components/GearPackForm.js
-import { Package, PlusCircle, X } from "lucide-react";
+import { PlusCircle, X } from "lucide-react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { handleCreateGearPack } from "../services";
 import { gearPackSchema } from "../utils/schemas";
 
 // Gear Pack Form Component
-const GearPackForm = ({ onCreate, onClose }) => {
+const GearPackForm = ({ onClose }) => {
+  // Initialize the form with React Hook Form and Zod resolver
   const {
     register,
     control,
@@ -26,20 +28,13 @@ const GearPackForm = ({ onCreate, onClose }) => {
   });
 
   // Handle form submission
-  const onSubmit = (data) => {
-    // Create the new gear pack object
-    const newPack = {
-      id: Date.now(),
-      name: data.packName.trim(),
-      icon: <Package className="h-6 w-6 text-yellow-500" />,
-      items: data.items.map((item) => item.trim()),
-    };
-
-    // Invoke the onCreate callback with the new gear pack
-    onCreate(newPack);
-
-    // Close the form
-    onClose();
+  const onSubmit = async (data) => {
+    try {
+      await handleCreateGearPack(data);
+      onClose();
+    } catch (error) {
+      console.error("Error creating gear pack:", error);
+    }
   };
 
   return (
@@ -84,6 +79,12 @@ const GearPackForm = ({ onCreate, onClose }) => {
               >
                 <X className="h-5 w-5" />
               </button>
+            )}
+            {/* Display error for individual item */}
+            {errors.items && errors.items[index] && (
+              <p className="text-red-500 text-sm ml-2">
+                {errors.items[index].message}
+              </p>
             )}
           </div>
         ))}
