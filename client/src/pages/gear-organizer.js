@@ -14,10 +14,11 @@ import {
 import { Transition, Dialog } from "@headlessui/react";
 import { motion } from "framer-motion";
 import { Loader, Toast } from "../components";
-import { GearPackForm } from "./gear-pack";
+import { useGearList } from "../queries";
+
+import GearPackForm from "./gear-pack";
 import Reminders from "./reminder";
 import GroupPacking from "./group-packing";
-import { useGearList } from "../queries";
 
 // Predefined Gear Packs with Lucide Icons
 const predefinedGearPacks = [

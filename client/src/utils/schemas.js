@@ -24,3 +24,18 @@ export const signupSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"], // Set the path of the error to confirmPassword
   });
+
+export const gearPackSchema = z.object({
+  packName: z
+    .string()
+    .min(1, "Gear pack name is required")
+    .max(100, "Pack name must be at most 100 characters"),
+  items: z
+    .array(
+      z
+        .string()
+        .min(1, "Gear item cannot be empty")
+        .max(100, "Gear item must be at most 100 characters")
+    )
+    .min(1, "At least one gear item is required"),
+});
