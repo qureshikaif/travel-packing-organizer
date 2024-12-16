@@ -1,11 +1,12 @@
 // login.js
+import Background from "../assets/side.jpg";
+
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Background from "../assets/side.jpg";
-import handleLogin from "../services/auth/handleLogin";
 import { loginSchema } from "../utils/schemas";
+import { handleLogin } from "../services";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -23,7 +24,6 @@ const LoginPage = () => {
     try {
       const response = await handleLogin(data);
       const { token, user } = response;
-      console.log("RESPONSE: " + JSON.stringify(response, null, 2));
       login({ user, token });
     } catch (error) {
       setError("apiError", { message: error.message });

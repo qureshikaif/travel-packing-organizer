@@ -1,42 +1,54 @@
-// src/context/AuthContext.js
-import { createContext, useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-// Create the Auth Context
 const AuthContext = createContext();
 
-// Auth Provider Component
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  
-  // State to hold authentication status
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  // State to hold user information (optional)
-  const [user, setUser] = useState(null);
-  
-  // Login function
-  const login = (userData) => {
+
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const token = localStorage.getItem("authToken");
+    return !!token;
+  });
+
+  const [user, setUser] = useState(() => {
+    const userData = localStorage.getItem("authUser");
+    return userData ? JSON.parse(userData) : null;
+  });
+
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("authToken") || null;
+  });
+
+  const login = ({ user, token }) => {
     setIsAuthenticated(true);
-    setUser(userData);
-    navigate('/gear-organizer');
+    setUser(user);
+    setToken(token);
+
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("authUser", JSON.stringify(user));
+    navigate("/gear-organizer");
   };
-  
-  // Logout function
+
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
-    navigate('/');
+    setToken(null);
+
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("authUser");
+    navigate("/login");
   };
-  
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, token, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook to use Auth Context
 export const useAuth = () => {
   return useContext(AuthContext);
 };
