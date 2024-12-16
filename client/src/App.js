@@ -5,9 +5,12 @@ import SignupPage from './pages/signup';
 import GearOrganizer from './pages/gear-organizer';
 import { AuthProvider } from './context/auth-context';
 import ProtectedRoute from './routes/protected-route';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
+  const queryClient = new QueryClient();
   return (
+    <QueryClientProvider client={queryClient}>
     <Router>
       <AuthProvider>
         <div className="min-h-screen bg-gray-100">
@@ -15,7 +18,6 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            {/* Protected Route */}
             <Route
               path="/gear-organizer"
               element={
@@ -24,12 +26,13 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            {/* Fallback Route */}
             <Route path="*" element={<LandingPage />} />
           </Routes>
         </div>
       </AuthProvider>
     </Router>
+    </QueryClientProvider>
+
   );
 }
 
