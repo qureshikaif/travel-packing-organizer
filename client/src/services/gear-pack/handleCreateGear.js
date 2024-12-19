@@ -1,4 +1,4 @@
-import API_CLIENT from "../utils/api-client";
+import API_CLIENT from "../../utils/api-client";
 /**
  * Handles the creation of a new gear pack.
  * @param {Object} data - The form data.
@@ -17,7 +17,6 @@ const handleCreateGearPack = async (data) => {
     };
 
     const response = await API_CLIENT.post("/api/gearpacks", payload);
-    console.log("Gear Pack Created:", response.data);
     return response.data;
   } catch (error) {
     // Handle errors appropriately

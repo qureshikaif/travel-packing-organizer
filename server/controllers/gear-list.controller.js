@@ -48,18 +48,18 @@ export const addGearItem = async (req, res, next) => {
 export const removeGearItem = async (req, res, next) => {
   try {
     const gearItem = await GearItem.findById(req.params.id);
+
     if (!gearItem) {
       return res.status(404).json({ message: "Gear item not found." });
     }
 
-    // Check if the item belongs to the user
     if (gearItem.user.toString() !== req.user.id) {
       return res
         .status(401)
         .json({ message: "Not authorized to remove this gear item." });
     }
 
-    await gearItem.remove();
+    await GearItem.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: "Gear item removed." });
   } catch (error) {

@@ -12,12 +12,18 @@ import {
 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { Loader, Sidebar, Toast } from "../components";
+import { Loader, Sidebar } from "../components";
 import { useGearList, useGearPack } from "../queries";
 
 import GearPackForm from "./gear-pack";
 import Reminders from "./reminder";
 import GroupPacking from "./group-packing";
+import {
+  handleAddGearItem,
+  handleRemoveGearItem,
+  toggleGearItem,
+} from "../services";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Predefined Gear Packs with Lucide Icons
 const predefinedGearPacks = [
@@ -42,18 +48,12 @@ const predefinedGearPacks = [
 ];
 
 const GearOrganizer = () => {
+  const client = useQueryClient();
   const { user, logout } = useAuth();
   const { data: gearList, isFetching: isFetchingGearList } = useGearList();
   const { data: gearPack, isFetching: isFetchingGearPack } = useGearPack();
 
   const isFetching = isFetchingGearList || isFetchingGearPack;
-
-  console.log("API RESPONSE", gearPack);
-
-  // State to hold user's gear list
-
-  // State for toast notifications
-  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   // State for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,25 +67,6 @@ const GearOrganizer = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-yellow-50 via-white to-yellow-200">
-      {/* Toast Notification */}
-      <Transition
-        show={toast.show}
-        enter="transition-opacity duration-300"
-        enterFrom="opacity-0 translate-y-[-10px]"
-        enterTo="opacity-100 translate-y-0"
-        leave="transition-opacity duration-300"
-        leaveFrom="opacity-100 translate-y-0"
-        leaveTo="opacity-0 translate-y-[-10px]"
-      >
-        {toast.show && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast({ ...toast, show: false })}
-          />
-        )}
-      </Transition>
-
       {/* Header */}
       <header className="flex flex-col md:flex-row justify-between items-center bg-yellow-100 p-6 rounded-lg shadow mb-12">
         <div className="flex items-center mb-4 md:mb-0">
@@ -153,7 +134,11 @@ const GearOrganizer = () => {
                       </ul>
                     </div>
                     <button
-                      // onClick={() => addGearPack(pack)}
+                      onClick={() =>
+                        pack.items.forEach((item) =>
+                          handleAddGearItem(item, client)
+                        )
+                      }
                       className="mt-auto flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-transform transform hover:scale-105"
                     >
                       <CheckCircle className="h-5 w-5 mr-2" />
@@ -252,9 +237,18 @@ const GearOrganizer = () => {
                     >
                       <div className="flex items-center">
                         <input
+                          onChange={async () => {
+                            try {
+                              await toggleGearItem(gear._id, client);
+                            } catch (error) {
+                              console.error(
+                                "Failed to toggle gear item:",
+                                error.message
+                              );
+                            }
+                          }}
                           type="checkbox"
                           checked={gear.packed}
-                          // onChange={() => togglePackedStatus(gear.name)}
                           className="form-checkbox h-5 w-5 text-yellow-600"
                         />
                         <span
@@ -266,7 +260,16 @@ const GearOrganizer = () => {
                         </span>
                       </div>
                       <button
-                        // onClick={() => removeGearItem(gear.name)}
+                        onClick={async () => {
+                          try {
+                            await handleRemoveGearItem(gear._id, client);
+                          } catch (error) {
+                            console.error(
+                              "Failed to remove gear item:",
+                              error.message
+                            );
+                          }
+                        }}
                         className="flex items-center px-3 py-1 bg-red-400 text-white rounded hover:bg-red-500 transition-transform transform hover:scale-105"
                         aria-label={`Remove ${gear.name}`}
                       >
