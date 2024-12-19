@@ -2,30 +2,17 @@ import { motion } from "framer-motion";
 import { CheckCircle, Package } from "lucide-react";
 import { handleAddGearItem } from "../services";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGearPack } from "../queries";
+import { Loader } from "../components";
 
-// Predefined Gear Packs with Lucide Icons
-const predefinedGearPacks = [
-  {
-    id: 1,
-    name: "Weekend Getaway",
-    icon: <Package className="h-6 w-6 text-yellow-500" />,
-    items: ["T-Shirt", "Jeans", "Sneakers", "Toiletry Kit", "Sunglasses"],
-  },
-  {
-    id: 2,
-    name: "Business Trip",
-    icon: <Package className="h-6 w-6 text-yellow-600" />,
-    items: ["Suit", "Dress Shirt", "Tie", "Leather Shoes", "Laptop"],
-  },
-  {
-    id: 3,
-    name: "Adventure Travel",
-    icon: <Package className="h-6 w-6 text-yellow-400" />,
-    items: ["Backpack", "Hiking Boots", "Water Bottle", "First Aid Kit", "Map"],
-  },
-];
 const PreDefinedPacks = () => {
   const client = useQueryClient();
+  const { data, isFetching } = useGearPack();
+
+  if (isFetching) {
+    return <Loader />;
+  }
+
   return (
     <section className="mb-12">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">
@@ -33,7 +20,7 @@ const PreDefinedPacks = () => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Predefined Gear Packs */}
-        {predefinedGearPacks.map((pack) => (
+        {data.slice(0, 15).map((pack) => (
           <motion.div
             key={pack.id}
             className="bg-yellow-50 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
@@ -42,7 +29,7 @@ const PreDefinedPacks = () => {
           >
             <div>
               <div className="flex items-center mb-4">
-                {pack.icon}
+                <Package className="size-8" />
                 <h3 className="text-xl font-bold ml-2 text-gray-800">
                   {pack.name}
                 </h3>

@@ -34,13 +34,13 @@ const GearPack = () => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Custom Gear Packs */}
-        {gearPack?.length === 0 ? (
+        {gearPack?.length <= 15 ? (
           <p className="text-gray-600">
             No custom gear packs created yet. Click "Create Gear Pack" to get
             started.
           </p>
         ) : (
-          gearPack?.map((pack) => (
+          gearPack?.slice(15).map((pack) => (
             <motion.div
               key={pack._id}
               className="bg-yellow-50 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"

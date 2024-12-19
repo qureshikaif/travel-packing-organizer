@@ -6,6 +6,7 @@ import {
   addGearItem,
   removeGearItem,
   toggleGearItem,
+  removeAllGearItems,
 } from "../controllers/gear-list.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 
@@ -30,5 +31,10 @@ router.delete("/:id", authMiddleware, removeGearItem);
 // @desc    Toggle packed status of a gear item
 // @access  Private
 router.put("/:id/toggle", authMiddleware, toggleGearItem);
+
+// @route   DELETE /api/gearlists
+// @desc    Remove all gear items
+// @access  Private
+router.delete("/", authMiddleware, removeAllGearItems);
 
 export default router;

@@ -1,7 +1,11 @@
 import { Trash2 } from "lucide-react";
 import { Loader } from "../components";
 import { useGearList } from "../queries";
-import { handleRemoveGearItem, toggleGearItem } from "../services";
+import {
+  handleRemoveAll,
+  handleRemoveGearItem,
+  toggleGearItem,
+} from "../services";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 
@@ -17,9 +21,23 @@ const GearList = () => {
 
   return (
     <section>
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-        My Gear List
-      </h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800">My Gear List</h2>
+        <button
+          onClick={async () => {
+            try {
+              await handleRemoveAll(client);
+            } catch (error) {
+              console.error("Failed to remove gear items:", error.message);
+            }
+          }}
+          className="flex items-center px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500 transition-transform transform hover:scale-105"
+          // aria-label={`Remove ${gear.name}`}
+        >
+          <Trash2 className="h-5 w-5" />
+          <span className="ml-1">Remove All</span>
+        </button>
+      </div>
       {gearList?.length === 0 ? (
         <p className="text-gray-600">
           Your gear list is empty. Add items from a gear pack above.

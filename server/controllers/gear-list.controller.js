@@ -67,6 +67,25 @@ export const removeGearItem = async (req, res, next) => {
   }
 };
 
+// @desc    Remove all gear items
+// @route   DELETE /api/gearlists
+// @access  Private
+export const removeAllGearItems = async (req, res, next) => {
+  try {
+    const result = await GearItem.deleteMany({ user: req.user.id });
+
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "No gear items found to delete." });
+    }
+
+    res.status(200).json({ message: "All gear items removed successfully." });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Toggle packed status of a gear item
 // @route   PUT /api/gearlists/:id/toggle
 // @access  Private

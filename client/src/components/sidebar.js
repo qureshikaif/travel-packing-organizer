@@ -1,4 +1,4 @@
-import { Bell, Package, PlusCircle, User } from "lucide-react";
+import { Bell, ListChecksIcon, Package, PlusCircle, User } from "lucide-react";
 
 const Sidebar = ({ selectedFeature, setSelectedFeature }) => {
   return (
@@ -56,7 +56,7 @@ const Sidebar = ({ selectedFeature, setSelectedFeature }) => {
               selectedFeature === "gear" ? "bg-yellow-200" : ""
             }`}
           >
-            <User className="h-6 w-6 text-blue-500 mr-2" />
+            <ListChecksIcon className="h-6 w-6 text-blue-500 mr-2" />
             Gear List
           </button>
         </li>

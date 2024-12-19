@@ -5,6 +5,7 @@ import handleAddGearItem from "./gear-list/handleAddGearItem";
 import handleRemoveGearItem from "./gear-list/handleRemoveGearItem";
 import toggleGearItem from "./gear-list/toggleGearItem";
 import handleDeleteReminder from "./reminder/handleDeleteReminder";
+import handleRemoveAll from "./gear-list/handleRemoveAll";
 
 export {
   handleLogin,
@@ -14,4 +15,5 @@ export {
   handleRemoveGearItem,
   toggleGearItem,
   handleDeleteReminder,
+  handleRemoveAll,
 };
