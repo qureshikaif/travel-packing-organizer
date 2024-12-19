@@ -1,6 +1,6 @@
 import Navbar from "./navbar";
-import Toast from "./toast";
 import Loader from "./loader";
 import Sidebar from "./sidebar";
+import CreateGearPackModal from "./modals/create-gear-pack-modal";
 
-export { Navbar, Toast, Loader, Sidebar };
+export { Navbar, Loader, Sidebar, CreateGearPackModal };

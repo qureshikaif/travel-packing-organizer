@@ -1,13 +1,17 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, PlusCircle } from "lucide-react";
 import { useGearPack } from "../queries";
 import { handleAddGearItem } from "../services";
 import { motion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader } from "../components";
+import { CreateGearPackModal, Loader } from "../components";
+import { useState } from "react";
 
 const GearPack = () => {
   const client = useQueryClient();
   const { data: gearPack, isFetching } = useGearPack();
+
+  // State for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isFetching) {
     return <Loader />;
@@ -15,6 +19,16 @@ const GearPack = () => {
 
   return (
     <section className="mb-12">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+        Create New Gear Pack
+      </h2>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="mb-5 w-full flex flex-col items-center justify-center bg-yellow-100 p-5 text-white rounded-xl hover:bg-yellow-200 transition"
+      >
+        <PlusCircle className="size-10 text-slate-900" />
+        {/* Create Gear Pack */}
+      </button>
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">
         Your Custom Gear Packs
       </h2>
@@ -59,6 +73,12 @@ const GearPack = () => {
           ))
         )}
       </div>
+
+      {/* Gear Pack Form Modal */}
+      <CreateGearPackModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+      />
     </section>
   );
 };

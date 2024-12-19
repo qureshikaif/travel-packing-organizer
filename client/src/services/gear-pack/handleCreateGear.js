@@ -7,7 +7,7 @@ import API_CLIENT from "../../utils/api-client";
  * @returns {Promise<Object>} - The created gear pack data.
  * @throws {Error} - Throws an error if the request fails.
  */
-const handleCreateGearPack = async (data) => {
+const handleCreateGearPack = async (data, client) => {
   try {
     const payload = {
       name: data.packName.trim(),
@@ -17,6 +17,8 @@ const handleCreateGearPack = async (data) => {
     };
 
     const response = await API_CLIENT.post("/api/gearpacks", payload);
+
+    client.invalidateQueries({ queryKey: ["gearPack"] });
     return response.data;
   } catch (error) {
     // Handle errors appropriately

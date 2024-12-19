@@ -4,9 +4,11 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { handleCreateGearPack } from "../../services";
 import { gearPackSchema } from "../../utils/schemas";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Gear Pack Form Component
 const GearPackForm = ({ onClose }) => {
+  const client = useQueryClient();
   // Initialize the form with React Hook Form and Zod resolver
   const {
     register,
@@ -30,7 +32,7 @@ const GearPackForm = ({ onClose }) => {
   // Handle form submission
   const onSubmit = async (data) => {
     try {
-      await handleCreateGearPack(data);
+      await handleCreateGearPack(data, client);
       onClose();
     } catch (error) {
       console.error("Error creating gear pack:", error);
