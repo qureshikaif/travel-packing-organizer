@@ -7,6 +7,7 @@ import { useReminder } from "../queries";
 import handleCreateReminder from "../services/reminder/handleCreateReminder";
 import Loader from "../components/loader";
 import { useQueryClient } from "@tanstack/react-query";
+import { handleDeleteReminder } from "../services";
 
 const Reminders = () => {
   const client = useQueryClient();
@@ -98,7 +99,7 @@ const Reminders = () => {
         <ul>
           {data.map((reminder) => (
             <motion.li
-              key={reminder.id}
+              key={reminder._id}
               className="flex items-center justify-between p-3 bg-yellow-100 rounded-md mb-2"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -109,11 +110,17 @@ const Reminders = () => {
                   {reminder.item}
                 </span>
                 <p className="text-sm text-gray-600">
-                  Remind me {reminder.timeBefore}
+                  Remind me in {reminder.timeBefore}
                 </p>
               </div>
               <button
-                // onClick={() => removeReminder(reminder.id)}
+                onClick={async () => {
+                  try {
+                    await handleDeleteReminder(reminder._id, client);
+                  } catch (error) {
+                    console.error("Failed to delete reminders:", error.message);
+                  }
+                }}
                 className="text-red-500 hover:text-red-600 focus:outline-none"
                 aria-label="Remove Reminder"
               >

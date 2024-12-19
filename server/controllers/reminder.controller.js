@@ -53,7 +53,7 @@ export const deleteReminder = async (req, res, next) => {
         .json({ message: "Not authorized to delete this reminder." });
     }
 
-    await reminder.remove();
+    await Reminder.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: "Reminder removed." });
   } catch (error) {

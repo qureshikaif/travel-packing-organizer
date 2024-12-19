@@ -1,124 +1,66 @@
-// src/components/GearPackForm.js
-import { PlusCircle, X } from "lucide-react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { handleCreateGearPack } from "../services";
-import { gearPackSchema } from "../utils/schemas";
+import { CheckCircle } from "lucide-react";
+import { useGearPack } from "../queries";
+import { handleAddGearItem } from "../services";
+import { motion } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader } from "../components";
 
-// Gear Pack Form Component
-const GearPackForm = ({ onClose }) => {
-  // Initialize the form with React Hook Form and Zod resolver
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: zodResolver(gearPackSchema),
-    defaultValues: {
-      packName: "",
-      items: [""],
-    },
-  });
+const GearPack = () => {
+  const client = useQueryClient();
+  const { data: gearPack, isFetching } = useGearPack();
 
-  // Initialize useFieldArray for dynamic items
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "items",
-  });
-
-  // Handle form submission
-  const onSubmit = async (data) => {
-    try {
-      await handleCreateGearPack(data);
-      onClose();
-    } catch (error) {
-      console.error("Error creating gear pack:", error);
-    }
-  };
+  if (isFetching) {
+    return <Loader />;
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-      {/* Gear Pack Name Field */}
-      <div className="mb-4">
-        <label className="block text-gray-700 mb-2">Gear Pack Name</label>
-        <input
-          type="text"
-          {...register("packName")}
-          className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-yellow-100 ${
-            errors.packName ? "border-red-500" : "border-gray-300"
-          }`}
-          placeholder="e.g., Hiking Essentials"
-        />
-        {errors.packName && (
-          <p className="text-red-500 text-sm mt-1">{errors.packName.message}</p>
-        )}
-      </div>
-
-      {/* Gear Items Fields */}
-      <div className="mb-4">
-        <label className="block text-gray-700 mb-2">Gear Items</label>
-        {fields.map((field, index) => (
-          <div key={field.id} className="flex items-center mb-2">
-            <input
-              type="text"
-              {...register(`items.${index}`)}
-              className={`flex-1 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-yellow-100 ${
-                errors.items && errors.items[index]
-                  ? "border-red-500"
-                  : "border-gray-300"
-              }`}
-              placeholder={`Item ${index + 1}`}
-            />
-            {fields.length > 1 && (
+    <section className="mb-12">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+        Your Custom Gear Packs
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Custom Gear Packs */}
+        {gearPack?.length === 0 ? (
+          <p className="text-gray-600">
+            No custom gear packs created yet. Click "Create Gear Pack" to get
+            started.
+          </p>
+        ) : (
+          gearPack?.map((pack) => (
+            <motion.div
+              key={pack._id}
+              className="bg-yellow-50 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <div>
+                <div className="flex items-center mb-4">
+                  {pack.icon}
+                  <h3 className="text-xl font-bold ml-2 text-gray-800">
+                    {pack.name}
+                  </h3>
+                </div>
+                <ul className="list-disc list-inside mb-6 text-gray-600">
+                  {pack.items.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
               <button
-                type="button"
-                onClick={() => remove(index)}
-                className="ml-2 text-red-500 hover:text-red-600 focus:outline-none"
-                aria-label="Remove item"
+                onClick={() =>
+                  pack.items.forEach((item) => handleAddGearItem(item, client))
+                }
+                className="mt-auto flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-transform transform hover:scale-105"
               >
-                <X className="h-5 w-5" />
+                <CheckCircle className="h-5 w-5 mr-2" />
+                Add to My Gear
               </button>
-            )}
-            {/* Display error for individual item */}
-            {errors.items && errors.items[index] && (
-              <p className="text-red-500 text-sm ml-2">
-                {errors.items[index].message}
-              </p>
-            )}
-          </div>
-        ))}
-
-        {/* Display validation error for items array */}
-        {errors.items && typeof errors.items.message === "string" && (
-          <p className="text-red-500 text-sm mt-1">{errors.items.message}</p>
+            </motion.div>
+          ))
         )}
-
-        {/* Add Item Button */}
-        <button
-          type="button"
-          onClick={() => append("")}
-          className="flex items-center text-yellow-600 hover:text-yellow-700 mt-2"
-        >
-          <PlusCircle className="h-5 w-5 mr-2" />
-          Add Another Item
-        </button>
       </div>
-
-      {/* Submit Button */}
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-transform transform hover:scale-105 ${
-            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {isSubmitting ? "Creating..." : "Create Gear Pack"}
-        </button>
-      </div>
-    </form>
+    </section>
   );
 };
 
-export default GearPackForm;
+export default GearPack;

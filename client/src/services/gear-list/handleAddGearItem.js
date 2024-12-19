@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import API_CLIENT from "../../utils/api-client";
 /**
  * Handles the creation of a new gear pack.
@@ -13,14 +14,18 @@ const handleAddGearItem = async (itemName, client) => {
 
     const response = await API_CLIENT.post("/api/gearlists", payload);
 
+    toast.success("Item added to your gear list");
     client.invalidateQueries({ queryKey: ["gearList"] });
+
     return response.data;
   } catch (error) {
     // Handle errors appropriately
     if (error.response && error.response.data && error.response.data.message) {
-      throw new Error(error.response.data.message);
+      toast.error(error.response.data.message);
+      // throw new Error(error.response.data.message);
     } else {
-      throw new Error("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
+      // throw new Error("An unexpected error occurred. Please try again.");
     }
   }
 };
