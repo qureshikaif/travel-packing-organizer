@@ -8,7 +8,8 @@ import API_CLIENT from "../utils/api-client";
  * @returns {Object} - Contains data, error, and status flags.
  */
 const fetchReminder = async (userId) => {
-  const response = await API_CLIENT.get(`/api/gearpacks/${userId}`);
+  const response = await API_CLIENT.get(`/api/reminders/${userId}`);
+
   return response.data;
 };
 

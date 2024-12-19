@@ -1,17 +1,17 @@
 // src/components/GroupPacking.js
 
-import { useState, useEffect } from 'react';
-import { PlusCircle, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { PlusCircle, X } from "lucide-react";
+import { motion } from "framer-motion";
 
 const GroupPacking = () => {
   const [groupLists, setGroupLists] = useState([]);
-  const [listName, setListName] = useState('');
-  const [members, setMembers] = useState(['']);
+  const [listName, setListName] = useState("");
+  const [members, setMembers] = useState([""]);
 
   // Load groupLists from localStorage on component mount
   useEffect(() => {
-    const storedGroupLists = localStorage.getItem('groupLists');
+    const storedGroupLists = localStorage.getItem("groupLists");
     if (storedGroupLists) {
       setGroupLists(JSON.parse(storedGroupLists));
     }
@@ -19,21 +19,23 @@ const GroupPacking = () => {
 
   // Save groupLists to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('groupLists', JSON.stringify(groupLists));
+    localStorage.setItem("groupLists", JSON.stringify(groupLists));
   }, [groupLists]);
 
   const addGroupList = (e) => {
     e.preventDefault();
     const trimmedListName = listName.trim();
-    const trimmedMembers = members.map((member) => member.trim()).filter((member) => member !== '');
+    const trimmedMembers = members
+      .map((member) => member.trim())
+      .filter((member) => member !== "");
 
     if (!trimmedListName) {
-      alert('Please enter a group list name.');
+      alert("Please enter a group list name.");
       return;
     }
 
     if (trimmedMembers.length === 0) {
-      alert('Please enter at least one member.');
+      alert("Please enter at least one member.");
       return;
     }
 
@@ -45,8 +47,8 @@ const GroupPacking = () => {
     };
 
     setGroupLists([...groupLists, newGroupList]);
-    setListName('');
-    setMembers(['']);
+    setListName("");
+    setMembers([""]);
   };
 
   const removeGroupList = (id) => {
@@ -54,7 +56,7 @@ const GroupPacking = () => {
   };
 
   const addMemberField = () => {
-    setMembers([...members, '']);
+    setMembers([...members, ""]);
   };
 
   const removeMemberField = (index) => {
@@ -116,16 +118,20 @@ const GroupPacking = () => {
         </div>
         <button
           type="submit"
-          className="w-full flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-transform transform hover:scale-105"
+          className="w-full flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-transform transform"
         >
           <PlusCircle className="h-5 w-5 mr-2" />
           Create Group List
         </button>
       </form>
 
-      <h3 className="text-xl font-semibold mb-4 text-gray-800">Your Group Packing Lists</h3>
+      <h3 className="text-xl font-semibold mb-4 text-gray-800">
+        Your Group Packing Lists
+      </h3>
       {groupLists.length === 0 ? (
-        <p className="text-gray-600">No group packing lists created yet. Create one above.</p>
+        <p className="text-gray-600">
+          No group packing lists created yet. Create one above.
+        </p>
       ) : (
         <ul>
           {groupLists.map((list) => (
@@ -138,7 +144,9 @@ const GroupPacking = () => {
             >
               <div>
                 <span className="font-medium text-gray-800">{list.name}</span>
-                <p className="text-sm text-gray-600">Members: {list.members.join(', ')}</p>
+                <p className="text-sm text-gray-600">
+                  Members: {list.members.join(", ")}
+                </p>
               </div>
               <button
                 onClick={() => removeGroupList(list.id)}

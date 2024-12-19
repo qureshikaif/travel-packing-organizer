@@ -1,3 +1,4 @@
 import useGearList from "./useGearList";
 import useGearPack from "./useGearPack";
-export { useGearList, useGearPack };
+import useReminder from "./useReminder";
+export { useGearList, useGearPack, useReminder };

@@ -1,20 +1,21 @@
-// src/components/Reminders.js
-
-import { useState } from "react";
 import { X, Bell } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { reminderSchema } from "../utils/schemas";
+import { useReminder } from "../queries";
+import handleCreateReminder from "../services/reminder/handleCreateReminder";
+import Loader from "../components/loader";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Reminders = () => {
-  const [reminders, setReminders] = useState([]);
+  const client = useQueryClient();
+  const { data, isFetching } = useReminder();
 
   // Initialize React Hook Form
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(reminderSchema),
@@ -24,15 +25,12 @@ const Reminders = () => {
     },
   });
 
+  if (isFetching) {
+    return <Loader />;
+  }
+
   // Handle form submission
-  const onSubmit = (data) => {
-    const newReminder = {
-      id: Date.now(),
-      item: data.item.trim(),
-      timeBefore: data.timeBefore,
-    };
-    reset(); // Reset the form fields
-  };
+  const onSubmit = async (data) => await handleCreateReminder(data, client);
 
   return (
     <div className="bg-yellow-50 p-6 rounded-xl shadow-md">
@@ -81,7 +79,7 @@ const Reminders = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`w-full flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-transform transform hover:scale-105 ${
+          className={`w-full flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-transform transform ${
             isSubmitting ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
@@ -94,11 +92,11 @@ const Reminders = () => {
       <h3 className="text-xl font-semibold mb-4 text-gray-800">
         Your Reminders
       </h3>
-      {reminders.length === 0 ? (
+      {data.length === 0 ? (
         <p className="text-gray-600">No reminders set. Add a reminder above.</p>
       ) : (
         <ul>
-          {reminders.map((reminder) => (
+          {data.map((reminder) => (
             <motion.li
               key={reminder.id}
               className="flex items-center justify-between p-3 bg-yellow-100 rounded-md mb-2"
@@ -115,7 +113,7 @@ const Reminders = () => {
                 </p>
               </div>
               <button
-                onClick={() => removeReminder(reminder.id)}
+                // onClick={() => removeReminder(reminder.id)}
                 className="text-red-500 hover:text-red-600 focus:outline-none"
                 aria-label="Remove Reminder"
               >
