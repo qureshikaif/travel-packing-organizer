@@ -9,6 +9,7 @@ import gearPackRoutes from "./routes/gear-pack.route.js";
 import gearListRoutes from "./routes/gear-list.route.js";
 import reminderRoutes from "./routes/reminder.route.js";
 import groupPackingRoutes from "./routes/group-packing.route.js";
+import userRoutes from "./routes/user.route.js";
 import errorHandler from "./middlewares/error.middleware.js";
 
 // Load environment variables
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/gearpacks", gearPackRoutes);
 app.use("/api/gearlists", gearListRoutes);
 app.use("/api/reminders", reminderRoutes);

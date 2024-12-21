@@ -22,7 +22,7 @@ export const signupSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"], // Set the path of the error to confirmPassword
+    path: ["confirmPassword"],
   });
 
 export const gearPackSchema = z.object({
@@ -48,4 +48,14 @@ export const reminderSchema = z.object({
   timeBefore: z.enum(["1 day", "2 days", "1 week"], {
     errorMap: () => ({ message: "Please select a valid time before trip." }),
   }),
+});
+
+export const groupSchema = z.object({
+  listName: z.string().min(1, "Group list name is required"),
+  members: z
+    .array(z.string().min(1, "Select a member"))
+    .min(1, "At least one member is required"),
+  items: z
+    .array(z.string().min(1, "Item name is required"))
+    .min(1, "At least one item is required"),
 });
