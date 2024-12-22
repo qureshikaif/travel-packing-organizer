@@ -7,6 +7,7 @@ import toggleGearItem from "./gear-list/toggleGearItem";
 import handleDeleteReminder from "./reminder/handleDeleteReminder";
 import handleRemoveAll from "./gear-list/handleRemoveAll";
 import handleCreateGroupPack from "./group-pack/handleCreateGroupPack";
+import handleCreateReminder from "./reminder/handleCreateReminder";
 
 export {
   handleLogin,
@@ -15,7 +16,8 @@ export {
   handleAddGearItem,
   handleRemoveGearItem,
   toggleGearItem,
-  handleDeleteReminder,
   handleRemoveAll,
   handleCreateGroupPack,
+  handleCreateReminder,
+  handleDeleteReminder,
 };

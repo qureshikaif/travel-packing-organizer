@@ -1,17 +1,19 @@
+import { useState, useEffect } from "react";
 import { X, Bell } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { reminderSchema } from "../utils/schemas";
 import { useReminder } from "../queries";
-import handleCreateReminder from "../services/reminder/handleCreateReminder";
-import Loader from "../components/loader";
 import { useQueryClient } from "@tanstack/react-query";
-import { handleDeleteReminder } from "../services";
+import { handleDeleteReminder, handleCreateReminder } from "../services";
+import { calculateTimeLeft, reminderSchema } from "../utils";
+
+import Loader from "../components/loader";
 
 const Reminders = () => {
   const client = useQueryClient();
-  const { data, isFetching } = useReminder();
+  const { data: reminders, isFetching } = useReminder();
+  const [timeLeftMap, setTimeLeftMap] = useState({});
 
   // Initialize React Hook Form
   const {
@@ -25,6 +27,21 @@ const Reminders = () => {
       timeBefore: "",
     },
   });
+
+  // Update time left every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (reminders && reminders.length > 0) {
+        const updatedTimeLeftMap = reminders.reduce((acc, reminder) => {
+          acc[reminder._id] = calculateTimeLeft(reminder.timeBefore);
+          return acc;
+        }, {});
+        setTimeLeftMap(updatedTimeLeftMap);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [reminders]);
 
   if (isFetching) {
     return <Loader />;
@@ -52,23 +69,16 @@ const Reminders = () => {
           )}
         </div>
 
-        {/* Time Before Trip Field */}
+        {/* Reminder Date Field */}
         <div className="mb-4">
-          <label className="block text-gray-800 mb-2">Time Before Trip</label>
-          <select
+          <label className="block text-gray-800 mb-2">Reminder Date</label>
+          <input
+            type="date"
             {...register("timeBefore")}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-yellow-100 ${
               errors.timeBefore ? "border-red-500" : "border-gray-300"
             }`}
-            defaultValue=""
-          >
-            <option value="" disabled>
-              Select Time
-            </option>
-            <option value="1 day">1 Day Before</option>
-            <option value="2 days">2 Days Before</option>
-            <option value="1 week">1 Week Before</option>
-          </select>
+          />
           {errors.timeBefore && (
             <p className="text-red-500 text-sm mt-1">
               {errors.timeBefore.message}
@@ -93,11 +103,11 @@ const Reminders = () => {
       <h3 className="text-xl font-semibold mb-4 text-gray-800">
         Your Reminders
       </h3>
-      {data.length === 0 ? (
+      {reminders.length === 0 ? (
         <p className="text-gray-600">No reminders set. Add a reminder above.</p>
       ) : (
         <ul>
-          {data.map((reminder) => (
+          {reminders.map((reminder) => (
             <motion.li
               key={reminder._id}
               className="flex items-center justify-between p-3 bg-yellow-100 rounded-md mb-2"
@@ -110,7 +120,11 @@ const Reminders = () => {
                   {reminder.item}
                 </span>
                 <p className="text-sm text-gray-600">
-                  Remind me in {reminder.timeBefore}
+                  Remind me on{" "}
+                  {new Date(reminder.timeBefore).toLocaleDateString()}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {timeLeftMap[reminder._id] || "Calculating..."}
                 </p>
               </div>
               <button

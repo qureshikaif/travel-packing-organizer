@@ -9,9 +9,14 @@ export const createReminder = async (req, res, next) => {
   try {
     const { item, timeBefore } = req.body;
 
+    // Validate date
+    if (isNaN(new Date(timeBefore).getTime())) {
+      return res.status(400).json({ message: "Invalid date format." });
+    }
+
     const reminder = new Reminder({
       item,
-      timeBefore,
+      timeBefore: new Date(timeBefore), // Save as Date object
       user: req.user.id,
     });
 

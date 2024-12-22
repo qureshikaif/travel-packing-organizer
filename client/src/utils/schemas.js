@@ -41,13 +41,13 @@ export const gearPackSchema = z.object({
 });
 
 export const reminderSchema = z.object({
-  item: z
+  item: z.string().min(1, "Item to remind is required"),
+  timeBefore: z
     .string()
-    .min(1, "Item to Remind is required.")
-    .max(100, "Item to Remind must be at most 100 characters."),
-  timeBefore: z.enum(["1 day", "2 days", "1 week"], {
-    errorMap: () => ({ message: "Please select a valid time before trip." }),
-  }),
+    .refine(
+      (date) => !isNaN(new Date(date).getTime()),
+      "Please provide a valid date"
+    ),
 });
 
 export const groupSchema = z.object({
