@@ -2,8 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema } from "../utils";
 import { handleResetPassword } from "../services";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,6 +18,7 @@ const ResetPassword = () => {
   const onSubmit = async (data) => {
     try {
       await handleResetPassword(data);
+      navigate("/login");
       alert(
         "Password reset successful. You can now log in with your new password."
       );

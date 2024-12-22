@@ -2,8 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { handleForgotPassword } from "../services";
 import { forgotPasswordSchema } from "../utils";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,6 +18,7 @@ const ForgotPassword = () => {
   const onSubmit = async (data) => {
     try {
       await handleForgotPassword(data.email);
+      navigate("/reset-password");
       alert("OTP sent to your email. Please check your inbox.");
     } catch (error) {
       setError("apiError", { message: error.message });
