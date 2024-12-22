@@ -1,7 +1,5 @@
-// login.js
 import Background from "../assets/side.jpg";
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +8,7 @@ import { handleLogin } from "../services";
 
 const LoginPage = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -93,12 +92,20 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <p className="mt-4 text-center">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-yellow-800 hover:underline">
-              Sign Up
-            </Link>
-          </p>
+          <div className="flex justify-between items-center mt-4">
+            <p>
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-yellow-800 hover:underline">
+                Sign Up
+              </Link>
+            </p>
+            <button
+              onClick={() => navigate("/forgot-password")}
+              className="text-yellow-800 hover:underline focus:outline-none"
+            >
+              Forgot Password?
+            </button>
+          </div>
         </div>
       </div>
     </div>

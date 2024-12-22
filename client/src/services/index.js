@@ -8,6 +8,8 @@ import handleDeleteReminder from "./reminder/handleDeleteReminder";
 import handleRemoveAll from "./gear-list/handleRemoveAll";
 import handleCreateGroupPack from "./group-pack/handleCreateGroupPack";
 import handleCreateReminder from "./reminder/handleCreateReminder";
+import handleForgotPassword from "./auth/handleForgotPassword";
+import handleResetPassword from "./auth/handleResetPassword";
 
 export {
   handleLogin,
@@ -20,4 +22,6 @@ export {
   handleCreateGroupPack,
   handleCreateReminder,
   handleDeleteReminder,
+  handleForgotPassword,
+  handleResetPassword,
 };

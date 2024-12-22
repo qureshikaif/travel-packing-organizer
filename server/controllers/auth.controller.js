@@ -3,6 +3,8 @@
 import OTP from "../models/otp.js";
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { sendOTPByEmail } from "../utils/notifications.js";
 
 // Generate JWT
 const generateToken = (user) => {

@@ -8,6 +8,8 @@ import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
 import GearOrganizer from "./pages/gear-organizer";
 import ProtectedRoute from "./routes/protected-route";
+import ForgotPassword from "./pages/forgot-password";
+import ResetPassword from "./pages/reset-password";
 
 function App() {
   const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route
                 path="/gear-organizer"
                 element={
