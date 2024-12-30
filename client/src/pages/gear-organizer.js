@@ -49,21 +49,21 @@ const GearOrganizer = () => {
         />
 
         {/* Gear Packs */}
-        <main className="w-full lg:w-3/4 pr-5">
+        <main className="w-full lg:w-3/4 lg:pr-5">
           {/* Feature-Based Sections */}
           {selectedFeature === "predefined" && <PreDefinedPacks />}
           {selectedFeature === "custom" && <GearPack />}
           {selectedFeature === "reminders" && (
-            <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+            <section className="mb-12 p-4 lg:p-0">
+              <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center lg:text-left">
                 Reminders
               </h2>
               <Reminders />
             </section>
           )}
           {selectedFeature === "group" && (
-            <section className="mb-12">
-              <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+            <section className="mb-12 p-4 lg:p-0">
+              <h2 className="text-2xl font-semibold mb-6 text-gray-800 text-center lg:text-left">
                 Group Packing
               </h2>
               <GroupPacking />

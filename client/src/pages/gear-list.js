@@ -20,7 +20,7 @@ const GearList = () => {
   }
 
   return (
-    <section>
+    <section className="p-4 lg:p-0">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">My Gear List</h2>
         <button
